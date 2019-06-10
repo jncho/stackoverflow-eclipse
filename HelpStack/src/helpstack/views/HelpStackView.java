@@ -1,6 +1,5 @@
-package pruebaplugin.views;
+package helpstack.views;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -26,11 +25,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import pruebaplugin.stackoverflow.api.StackOverflowAPI;
-import pruebaplugin.stackoverflow.model.Answer;
-import pruebaplugin.stackoverflow.model.Question;
+import helpstack.stackoverflow.api.StackOverflowAPI;
+import helpstack.stackoverflow.model.Answer;
+import helpstack.stackoverflow.model.Question;
 
-public class SampleView extends ViewPart {
+public class HelpStackView extends ViewPart {
 
 	private TableViewer viewer;
 	private StackOverflowAPI api;

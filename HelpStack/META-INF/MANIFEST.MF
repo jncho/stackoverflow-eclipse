@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: pruebaplugin
-Bundle-SymbolicName: pruebaplugin;singleton:=true
+Bundle-Name: helpstack
+Bundle-SymbolicName: helpstack;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: pruebaplugin.Activator
+Bundle-Activator: helpstack.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Automatic-Module-Name: pruebaplugin
+Automatic-Module-Name: helpstack
 Bundle-ClassPath: libs/gson-1.4.jar,
  .
