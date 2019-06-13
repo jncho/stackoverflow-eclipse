@@ -32,7 +32,7 @@ public class StackOverflowAPI {
 	}
 	
 	public String sendGet(String url) {
-		
+		// TODO Tener encuenta las excepciones de conexion
 		try {
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();

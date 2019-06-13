@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="libs/gson-1.4.jar"/>
+	<classpathentry kind="lib" path="libs/org.eclipse.swt_3.108.0.v20180904-1901.jar"/>
+	<classpathentry kind="lib" path="libs/mongo-java-driver-3.10.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
