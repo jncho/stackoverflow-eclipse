@@ -12,11 +12,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,14 +22,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import helpstack.recommendation.database.DatabaseRecommendation;
 import helpstack.stackoverflow.api.StackOverflowAPI;
-import helpstack.stackoverflow.model.Answer;
 import helpstack.stackoverflow.model.Question;
 
-public class HelpStackView extends ViewPart {
+public class SearchView extends ViewPart {
 
 	private TableViewer viewer;
 	private StackOverflowAPI api;
@@ -42,8 +40,7 @@ public class HelpStackView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		
 		
-		SashForm sf = new SashForm(parent,SWT.HORIZONTAL);
-		Composite compositeTable = new Composite(sf,SWT.NONE);
+		Composite compositeTable = new Composite(parent,SWT.NONE);
 		GridLayout gl = new GridLayout();
 		gl.numColumns = 4;
 		compositeTable.setLayout(gl);
@@ -78,22 +75,11 @@ public class HelpStackView extends ViewPart {
 		getSite().setSelectionProvider(viewer);
 		
 		
-
+		
 		// Layout Table Viewer
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 4;
 		viewer.getControl().setLayoutData(gd);
-		
-		// Sash question and answer
-		Composite compositeQuestion = new Composite(sf, SWT.NONE);
-		compositeQuestion.setLayout(new FillLayout());
-		Browser browserQuestion = new Browser(compositeQuestion,SWT.BORDER);
-		
-		Composite compositeAnswer = new Composite(sf, SWT.NONE);
-		compositeAnswer.setLayout(new FillLayout());
-		Browser browserAnswer = new Browser(compositeAnswer,SWT.BORDER);
-		
-		sf.setWeights(new int[] {2,3,3});
 
 		api = new StackOverflowAPI();
 		
@@ -130,7 +116,6 @@ public class HelpStackView extends ViewPart {
 				}
 				
 				viewer.refresh(true);
-				
 			}
 		});
 		
@@ -141,12 +126,11 @@ public class HelpStackView extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection)e.getSelection();
 				Question question = (Question)selection.getFirstElement();
 				
-				browserQuestion.setText(question.getBody());
-				for (Answer a : question.getAnswers()) {
-					if (a.getAnswer_id() == question.getAccepted_answer_id()) {
-						browserAnswer.setText(a.getBody());
-						break;
-					}
+				try {
+					ResultSearchView rsv = (ResultSearchView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("resultsearch");
+					rsv.updateView(question);
+				} catch (PartInitException e1) {
+					e1.printStackTrace();
 				}
 				
 			}

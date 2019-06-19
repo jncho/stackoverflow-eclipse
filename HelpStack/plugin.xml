@@ -9,11 +9,19 @@
       </category>
       <view
             category="helpstack"
-            class="helpstack.views.HelpStackView"
+            class="helpstack.views.SearchView"
             icon="icons/sample.png"
             id="helpstack"
             inject="true"
             name="HelpStack">
+      </view>
+      <view
+            category="helpstack"
+            class="helpstack.views.ResultSearchView"
+            icon="icons/sample.png"
+            id="resultsearch"
+            inject="true"
+            name="Result Search">
       </view>
    </extension>
    <extension
