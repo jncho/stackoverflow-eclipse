@@ -5,10 +5,15 @@ Bundle-SymbolicName: helpstack;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: helpstack.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.console;bundle-version="3.8.300"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: helpstack
 Bundle-ClassPath: libs/gson-1.4.jar,
  .,
- libs/mongo-java-driver-3.10.2.jar
+ libs/mongo-java-driver-3.10.2.jar,
+ libs/ini4j-0.5.4.jar,
+ libs/jsoup-1.12.1.jar

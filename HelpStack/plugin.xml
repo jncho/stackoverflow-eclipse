@@ -17,11 +17,27 @@
       </view>
       <view
             category="helpstack"
-            class="helpstack.views.ResultSearchView"
+            class="helpstack.views.ResultSearchSOView"
             icon="icons/sample.png"
-            id="resultsearch"
+            id="resultsearch_so"
             inject="true"
-            name="Result Search">
+            name="Result Search SO">
+      </view>
+      <view
+            category="helpstack"
+            class="helpstack.views.ResultSearchISEView"
+            icon="icons/sample.png"
+            id="resultsearch_ise"
+            inject="true"
+            name="Result Search ISE">
+      </view>
+      <view
+            category="helpstack"
+            class="helpstack.views.NewQuestionISEView"
+            icon="icons/sample.png"
+            id="new_question_ise"
+            inject="true"
+            name="New Question ISE">
       </view>
    </extension>
    <extension
@@ -35,6 +51,135 @@
                relative="org.eclipse.ui.views.ProblemView">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="helpstack.handlers.ShowNewQuestionViewHandler"
+            commandId="helpstack.commands.newQuestionIseCommand">
+      </handler>
+      <handler
+            class="helpstack.handlers.SearchSelection"
+            commandId="helpstack.commands.searchSelectionCommand">
+      </handler>
+      <handler
+            class="helpstack.handlers.ShowSearchCodeHandler"
+            commandId="helpstack.commands.showSearchCodeCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="helpstack.commands.helpStackCategory"
+            name="HelpStack">
+      </category>
+      <command
+            categoryId="helpstack.commands.helpStackCategory"
+            id="helpstack.commands.newQuestionIseCommand"
+            name="New Question ISE">
+      </command>
+      <command
+            categoryId="helpstack.commands.helpStackCategory"
+            id="helpstack.commands.searchSelectionCommand"
+            name="Search Selection">
+      </command>
+      <command
+            categoryId="helpstack.commands.helpStackCategory"
+            id="helpstack.commands.showSearchCodeCommand"
+            name="Search code">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="helpstack.menus.helpStackMenu"
+               label="Help Stack Menu"
+               mnemonic="M">
+            <command
+                  commandId="helpstack.commands.newQuestionIseCommand"
+                  id="helpstack.menus.newQuestionIseCommand"
+                  mnemonic="S">
+            </command>
+            <command
+                  commandId="helpstack.commands.searchSelectionCommand"
+                  id="helpstack.menus.searchSelectionCommand"
+                  mnemonic="S">
+            </command>
+            <command
+                  commandId="helpstack.commands.showSearchCodeCommand"
+                  id="helpstack.menus.showSearchCodeCommand"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="helpstack.toolbars.helpStackToolbar">
+            <command
+                  commandId="helpstack.commands.newQuestionIseCommand"
+                  icon="icons/sample.png"
+                  id="helpstack.toolbars.helpStackToolbar"
+                  tooltip="Create new Question ISE">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:IConsoleConstants.MESSAGE_CONSOLE_TYPE">
+         <popup
+               id="helpstack.popups.helpStackMenu"
+               label="Help Stack Menu"
+               mnemonic="M">
+            <command
+                  commandId="helpstack.commands.showSelectionCommand"
+                  id="helpstack.popups.showSelectionCommand"
+                  mnemonic="S">
+            </command>
+            
+         </popup>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="helpstack.preferences.HelpStackPreferencePage"
+            id="helpstack.preferences.elpStackPreferencePage"
+            name="Help Stack">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="helpstack.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="helpstack.editors.XMLEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="xml"
+            icon="icons/sample.png"
+            id="helpstack.editors.XMLEditor"
+            name="Sample XML Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="helpstack.commands.searchSelectionCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+Q">
+      </key>
+      <key
+            commandId="helpstack.commands.showSearchCodeCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+C">
+      </key>
    </extension>
 
 </plugin>

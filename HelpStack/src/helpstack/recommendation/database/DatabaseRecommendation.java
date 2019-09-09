@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -12,56 +13,82 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-import helpstack.stackoverflow.model.Question;
+import helpstack.Activator;
+import helpstack.interfaces.IQuestionRecomendation;
+import helpstack.preferences.PreferenceConstants;
 
 public class DatabaseRecommendation {
 	
-	private String host;
-	private int port;
+	public static final String D_HOST = "localhost";
+	public static final int D_PORT = 27017;
 	private String name_db = "RecommendationDB";
-	private String name_collection = "Recommendation";
 	
 	private MongoClient mongoClient;
 	private MongoDatabase database;
-	private MongoCollection<Document> collection;
+	
+	// Singleton
+	private static DatabaseRecommendation api;
+	
+	public static DatabaseRecommendation getInstance() {
+		if (api == null) {
+			api = new DatabaseRecommendation();
+		}
+		
+		return api;
+	}
+	
+	public static void updateInstance() {
+		api = new DatabaseRecommendation();
+	}
 
-	public DatabaseRecommendation(String host, int port) {
-		this.host = host;
-		this.port = port;
+	private DatabaseRecommendation() {
+		
+		IPreferenceStore ps = Activator.getDefault().getPreferenceStore();
+		String host = ps.getString(PreferenceConstants.P_SERVER_DR);
+		int port = ps.getInt(PreferenceConstants.P_PORT_DR);
 		
 		this.mongoClient = new MongoClient(host,port);
 		this.database = this.mongoClient.getDatabase(this.name_db);
-		this.collection = database.getCollection(this.name_collection);
 	}
 	
-	public void insertQuestion(Question question) {
-		int question_id = question.getQuestion_id();
-		int answer_id = question.getAccepted_answer_id();
+	public void insertQuestion(IQuestionRecomendation question) {
+		int question_id = question.getId();
+		MongoCollection<Document> collection = database.getCollection(question.getCollection());
 		
 		// Check if question exists in database
 		FindIterable<Document> iterable = collection.find(Filters.eq("question_id",question_id));
 		if (iterable.first() == null) {
-			Document document = new Document("question_id",question_id)
-					.append("answer_id", answer_id);
+			Document document = new Document("question_id",question_id);
 			collection.insertOne(document);
 		}
 	}
 	
-	public void deleteQuestion(Question question) {
-		int question_id = question.getQuestion_id();
+	public void deleteQuestion(IQuestionRecomendation question) {
+		int question_id = question.getId();
+		MongoCollection<Document> collection = database.getCollection(question.getCollection());
+		
 		collection.deleteOne(Filters.eq("question_id",question_id));
 	}
 	
-	public boolean existQuestion(Question question) {
-		int question_id = question.getQuestion_id();
+	public boolean existQuestion(IQuestionRecomendation question) {
+		int question_id = question.getId();
+		MongoCollection<Document> collection = database.getCollection(question.getCollection());
+		
 		FindIterable<Document> iterable = collection.find(Filters.eq("question_id",question_id));
 		return iterable.first() != null;
 	}
 	
-	public List<Question> sortQuestions(List<Question> questions) {
+	public List<IQuestionRecomendation> sortQuestions(List<IQuestionRecomendation> questions) {
+		
+		if (questions.isEmpty()) {
+			return questions;
+		}
+		
+		MongoCollection<Document> collection = database.getCollection(questions.get(0).getCollection());
+		
 		// Get ids from questions
 		List<Integer> ids = questions.stream()
-			.map(Question::getQuestion_id)
+			.map(IQuestionRecomendation::getId)
 			.collect(Collectors.toList());
 		
 		// Find questions in recommendations
@@ -89,38 +116,13 @@ public class DatabaseRecommendation {
 	
 	// SETTERS AND GETTERS
 
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
 	public String getName_db() {
 		return name_db;
 	}
 
 	public void setName_db(String name_db) {
 		this.name_db = name_db;
-	}
-
-	public String getName_collection() {
-		return name_collection;
-	}
-
-	public void setName_collection(String name_collection) {
-		this.name_collection = name_collection;
-	}
-	
+	}	
 	
 	public MongoClient getMongoClient() {
 		return mongoClient;
@@ -136,14 +138,6 @@ public class DatabaseRecommendation {
 
 	public void setDatabase(MongoDatabase database) {
 		this.database = database;
-	}
-
-	public MongoCollection<Document> getCollection() {
-		return collection;
-	}
-
-	public void setCollection(MongoCollection<Document> collection) {
-		this.collection = collection;
 	}
 
 }

@@ -2,7 +2,7 @@ package helpstack.stackoverflow.model;
 
 import java.util.List;
 
-public class Question {
+public class Question{
 	private int question_id;
 	private String title;
 	private List<String> tags;
@@ -17,6 +17,20 @@ public class Question {
 	
 	public Question() {
 		
+	}
+	
+	public Question(int question_id, String title, List<String> tags, int accepted_answer_id, int answer_count,
+			List<Answer> answers, String body, boolean is_answered, int score, int view_count) {
+		this.question_id = question_id;
+		this.title = title;
+		this.tags = tags;
+		this.accepted_answer_id = accepted_answer_id;
+		this.answer_count = answer_count;
+		this.answers = answers;
+		this.body = body;
+		this.is_answered = is_answered;
+		this.score = score;
+		this.view_count = view_count;
 	}
 
 	public boolean isIs_answered() {
@@ -117,5 +131,17 @@ public class Question {
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public String getAnswer() {
+		String body = "";
+		for (Answer a : getAnswers()) {
+			if (a.getAnswer_id() == getAccepted_answer_id()) {
+				body = a.getBody();
+				break;
+			}
+		}
+		
+		return body;
 	}
 }
