@@ -1,14 +1,15 @@
 package helpstack.stackoverflow.api;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -18,59 +19,42 @@ import helpstack.stackoverflow.model.Filter;
 import helpstack.stackoverflow.model.Question;
 import helpstack.stackoverflow.model.ResultRest;
 
-public class StackOverflowAPI {
+public class StackOverflowProvider {
 
-	private final String url_root = "http://api.stackexchange.com/2.2/";
+	private final String URL_ROOT = "http://api.stackexchange.com/2.2/";
 	private ArrayList<String> fieldFilters;
 	private Filter filter;
 
 	private Gson gson;
 
 	// Singleton
-	private static StackOverflowAPI api;
+	private static StackOverflowProvider instance;
 
-	public static StackOverflowAPI getInstance() throws ConnectionSOException{
-		if (api == null) {
-			api = new StackOverflowAPI();
+	public static StackOverflowProvider getInstance() throws ConnectionSOException{
+		if (instance == null) {
+			instance = new StackOverflowProvider();
 		}
 
-		return api;
+		return instance;
 	}
 
-	private StackOverflowAPI() throws ConnectionSOException{
+	private StackOverflowProvider() throws ConnectionSOException{
 		gson = new Gson();
 		populateFieldFilters();
 		generateFilter();
 
 	}
 
-	public String sendGet(String url) throws IOException {
-		// TODO Tener encuenta las excepciones de conexion
-
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		con.setRequestMethod("GET");
-		con.setRequestProperty("User-Agent", "Mozilla/5.0");
-		con.setRequestProperty("Content-Type", "application/json");
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(con.getInputStream())));
-
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-
-		return response.toString();
+	private String sendGet(String url) throws IOException {
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(url);
+		HttpResponse responseHttp = httpClient.execute(request);
+		
+		return EntityUtils.toString(responseHttp.getEntity());
 
 	}
 
-	// TODO posible implementacion automatica mediante reflection de las clases del
-	// modelo.
-	public void populateFieldFilters() {
+	private void populateFieldFilters() {
 		fieldFilters = new ArrayList<String>();
 
 		// .Wrapper
@@ -97,8 +81,8 @@ public class StackOverflowAPI {
 		fieldFilters.add("question.view_count");
 	}
 
-	public void generateFilter() throws ConnectionSOException {
-		String url_request = url_root + "filters/create?";
+	private void generateFilter() throws ConnectionSOException {
+		String url_request = URL_ROOT + "filters/create?";
 		// Clean all default include fields
 		url_request += "base=none&";
 		// set Unsafe
@@ -121,6 +105,7 @@ public class StackOverflowAPI {
 			this.filter = result.getItems().get(0);
 
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new ConnectionSOException();
 		}
 
@@ -129,7 +114,7 @@ public class StackOverflowAPI {
 	public List<Question> searchQuestions(String q, boolean accepted, String title, List<String> tagged)
 			throws ConnectionSOException {
 		// Generate url request
-		String url_request = url_root + "search/advanced?";
+		String url_request = URL_ROOT + "search/advanced?";
 
 		// site
 		url_request += "site=stackoverflow&";
@@ -171,6 +156,7 @@ public class StackOverflowAPI {
 
 			return result != null ? result.getItems() : new ArrayList<Question>();
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new ConnectionSOException();
 		}
 	}

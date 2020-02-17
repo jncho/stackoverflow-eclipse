@@ -16,9 +16,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 import helpstack.controllers.SearchController;
-import helpstack.interfaces.IQuestionRecomendation;
+import helpstack.interfaces.IQuestionRecommendation;
 import helpstack.interfaces.IQuestionSearch;
-import helpstack.recommendation.database.DatabaseRecommendation;
+import helpstack.recommendation.database.RecommendationProvider;
 
 public class SearchView extends ViewPart {
 	
@@ -27,6 +27,7 @@ public class SearchView extends ViewPart {
 	private Button buttonSearch;
 	private Button buttonRecommendation;
 	private Text textSearch;
+	private Label labelResults;
 	
 
 	@Override
@@ -39,16 +40,16 @@ public class SearchView extends ViewPart {
 
 		// Label search
 		Label labelSearch = new Label(compositeTable, SWT.NONE);
-		labelSearch.setText("Consulta:");
+		labelSearch.setText("Query:");
 
 		// Text Search
 		textSearch = new Text(compositeTable, SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		textSearch.setLayoutData(gd);
-
+		
 		// Button Search
 		buttonSearch = new Button(compositeTable, SWT.PUSH);
-		buttonSearch.setText("Buscar");
+		buttonSearch.setText("Search");
 
 		// Button Recommendation
 		buttonRecommendation = new Button(compositeTable, SWT.PUSH);
@@ -71,6 +72,12 @@ public class SearchView extends ViewPart {
 		gd.horizontalSpan = 4;
 		viewer.getControl().setLayoutData(gd);
 		
+		// Results label
+		labelResults = new Label(compositeTable,SWT.NONE);
+		labelResults.setText("0 Results.");
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.horizontalSpan = 4;
+		labelResults.setLayoutData(gd);
 		// Controller
 		SearchController.registerListeners(this);
 
@@ -86,8 +93,8 @@ public class SearchView extends ViewPart {
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				IQuestionRecomendation q = (IQuestionRecomendation) element;
-				return DatabaseRecommendation.getInstance().existQuestion(q) ? "Y" : "N";
+				IQuestionRecommendation q = (IQuestionRecommendation) element;
+				return RecommendationProvider.getInstance().existQuestion(q) ? "Y" : "N";
 			}
 
 		});
@@ -144,7 +151,7 @@ public class SearchView extends ViewPart {
 	@Override
 	public void dispose() {
 		super.dispose();
-		DatabaseRecommendation.getInstance().close();
+		RecommendationProvider.getInstance().close();
 	}
 
 	public Button getButtonSearch() {
@@ -161,5 +168,13 @@ public class SearchView extends ViewPart {
 
 	public Text getTextSearch() {
 		return textSearch;
+	}
+
+	public Label getLabelResults() {
+		return labelResults;
+	}
+
+	public void setLabelResults(Label labelResults) {
+		this.labelResults = labelResults;
 	}
 }

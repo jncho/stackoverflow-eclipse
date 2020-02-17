@@ -23,7 +23,7 @@ import helpstack.controllers.SearchCodeController;
 
 public class SearchCodeDialog extends Dialog {
 	
-	private Text text;
+	private Text textSearch;
 	private Button btnSearch;
 	TableViewer tableViewer;
 	Browser browser;
@@ -51,8 +51,8 @@ public class SearchCodeDialog extends Dialog {
 		Composite composite = new Composite(sashForm, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 		
-		this.text = new Text(composite, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.textSearch = new Text(composite, SWT.BORDER);
+		textSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		this.btnSearch = new Button(composite, SWT.NONE);
 		btnSearch.setText("Search");
@@ -66,12 +66,7 @@ public class SearchCodeDialog extends Dialog {
 		
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		
-		
-		
-		Composite composite_1 = new Composite(sashForm, SWT.NONE);
-		composite_1.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
-		this.browser = new Browser(composite_1, SWT.NONE);
+		this.browser = new Browser(sashForm, SWT.NONE);
 		
 		SearchCodeController.registerListeners(this);
 		
@@ -113,11 +108,11 @@ public class SearchCodeDialog extends Dialog {
     }
 
 	public Text getText() {
-		return text;
+		return textSearch;
 	}
 
 	public void setText(Text text) {
-		this.text = text;
+		this.textSearch = text;
 	}
 
 	public Button getBtnSearch() {

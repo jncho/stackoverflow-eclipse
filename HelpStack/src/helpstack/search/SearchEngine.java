@@ -10,11 +10,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import helpstack.interfaces.ICodeSearch;
-import helpstack.interfaces.IQuestionRecomendation;
-import helpstack.intrase.database.DatabaseIntraSE;
+import helpstack.interfaces.IQuestionRecommendation;
+import helpstack.intrase.database.IntraSEProvider;
 import helpstack.intrase.model.WQuestionIntraSE;
-import helpstack.recommendation.database.DatabaseRecommendation;
-import helpstack.stackoverflow.api.StackOverflowAPI;
+import helpstack.recommendation.database.RecommendationProvider;
+import helpstack.stackoverflow.api.StackOverflowProvider;
 import helpstack.stackoverflow.exceptions.ConnectionSOException;
 import helpstack.stackoverflow.model.WQuestionSO;
 
@@ -24,18 +24,18 @@ public class  SearchEngine {
 		
 	}
 	
-	public static ArrayList<IQuestionRecomendation> searchQuestion(String query) throws ConnectionSOException{
+	public static ArrayList<IQuestionRecommendation> searchQuestions(String query) throws ConnectionSOException{
 		// Search in IntraSE
-		DatabaseIntraSE dbISE = DatabaseIntraSE.getInstance();
+		IntraSEProvider dbISE = IntraSEProvider.getInstance();
 		List<WQuestionIntraSE> wquestionsISE = WQuestionIntraSE.toWQuestionIntraSE(dbISE.searchByQuery(query));
-		ArrayList<IQuestionRecomendation> questionsISE = new ArrayList<IQuestionRecomendation>(wquestionsISE);
-		DatabaseRecommendation.getInstance().sortQuestions(questionsISE);
+		ArrayList<IQuestionRecommendation> questionsISE = new ArrayList<IQuestionRecommendation>(wquestionsISE);
+		RecommendationProvider.getInstance().sortQuestions(questionsISE);
 
 		// Search in SO
 		List<WQuestionSO> wquestionsSO = WQuestionSO
-				.toWQuestionIntraSE(StackOverflowAPI.getInstance().searchQuestions(query, true, null, null));
-		ArrayList<IQuestionRecomendation> questionsSO = new ArrayList<IQuestionRecomendation>(wquestionsSO);
-		DatabaseRecommendation.getInstance().sortQuestions(questionsSO);
+				.toWQuestionSO(StackOverflowProvider.getInstance().searchQuestions(query, true, null, null));
+		ArrayList<IQuestionRecommendation> questionsSO = new ArrayList<IQuestionRecommendation>(wquestionsSO);
+		RecommendationProvider.getInstance().sortQuestions(questionsSO);
 
 		// join lists
 		questionsISE.addAll(questionsSO);
@@ -43,19 +43,19 @@ public class  SearchEngine {
 		return questionsISE;
 	}
 	
-	public static ArrayList<String> searchQuestionCode(String query) throws ConnectionSOException{
+	public static ArrayList<String> searchQuestionsCode(String query) throws ConnectionSOException{
 		// Search in IntraSE
-		DatabaseIntraSE dbISE = DatabaseIntraSE.getInstance();
+		IntraSEProvider dbISE = IntraSEProvider.getInstance();
 		List<WQuestionIntraSE> wquestionsISE = WQuestionIntraSE.toWQuestionIntraSE(dbISE.searchByQuery(query));
-		ArrayList<IQuestionRecomendation> questionsISE = new ArrayList<IQuestionRecomendation>(wquestionsISE);
-		DatabaseRecommendation.getInstance().sortQuestions(questionsISE);
+		ArrayList<IQuestionRecommendation> questionsISE = new ArrayList<IQuestionRecommendation>(wquestionsISE);
+		RecommendationProvider.getInstance().sortQuestions(questionsISE);
 		List<ICodeSearch> questionsISEcode = questionsISE.stream().map(c -> (ICodeSearch)c).collect(Collectors.toList());
 
 		// Search in SO
 		List<WQuestionSO> wquestionsSO = WQuestionSO
-				.toWQuestionIntraSE(StackOverflowAPI.getInstance().searchQuestions(query, true, null, null));
-		ArrayList<IQuestionRecomendation> questionsSO = new ArrayList<IQuestionRecomendation>(wquestionsSO);
-		DatabaseRecommendation.getInstance().sortQuestions(questionsSO);
+				.toWQuestionSO(StackOverflowProvider.getInstance().searchQuestions(query, true, null, null));
+		ArrayList<IQuestionRecommendation> questionsSO = new ArrayList<IQuestionRecommendation>(wquestionsSO);
+		RecommendationProvider.getInstance().sortQuestions(questionsSO);
 		List<ICodeSearch> questionsSOcode = questionsSO.stream().map(c -> (ICodeSearch)c).collect(Collectors.toList());
 
 		// join lists
@@ -67,7 +67,7 @@ public class  SearchEngine {
 		for (ICodeSearch q : questions) {
 			String answer = q.getAnswer();
 			Document doc = Jsoup.parse(answer);
-			Iterator<Element> iterator = doc.select("code").iterator();
+			Iterator<Element> iterator = doc.select("pre code").iterator();
 			
 			while(iterator.hasNext()) {
 				codes.add(iterator.next().html());

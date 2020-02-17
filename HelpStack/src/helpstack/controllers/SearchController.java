@@ -8,12 +8,17 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
-import helpstack.interfaces.IQuestionRecomendation;
+import helpstack.interfaces.IQuestionRecommendation;
 import helpstack.interfaces.IQuestionSearch;
-import helpstack.recommendation.database.DatabaseRecommendation;
+import helpstack.recommendation.database.RecommendationProvider;
 import helpstack.search.SearchEngine;
 import helpstack.stackoverflow.exceptions.ConnectionSOException;
 import helpstack.views.SearchView;
@@ -30,19 +35,30 @@ public class SearchController {
 
 			}
 		});
+		
+		view.getTextSearch().addListener(SWT.Traverse,new Listener() {
+			@Override
+	        public void handleEvent(Event event)
+	        {
+	            if(event.detail == SWT.TRAVERSE_RETURN)
+	            {
+	            	search(view);
+	            }
+	        }
+		});
 
 		// Handle button recommendation
 		view.getButtonRecommendation().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();
-				IQuestionRecomendation question = (IQuestionRecomendation) selection.getFirstElement();
+				IQuestionRecommendation question = (IQuestionRecommendation) selection.getFirstElement();
 
-				if (DatabaseRecommendation.getInstance().existQuestion(question)) {
-					DatabaseRecommendation.getInstance().deleteQuestion(question);
+				if (RecommendationProvider.getInstance().existQuestion(question)) {
+					RecommendationProvider.getInstance().deleteQuestion(question);
 					view.getButtonRecommendation().setText("Like");
 				} else {
-					DatabaseRecommendation.getInstance().insertQuestion(question);
+					RecommendationProvider.getInstance().insertQuestion(question);
 					view.getButtonRecommendation().setText("UnLike");
 				}
 
@@ -68,11 +84,13 @@ public class SearchController {
 			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection selection = (IStructuredSelection) e.getSelection();
-				IQuestionRecomendation question = (IQuestionRecomendation) selection.getFirstElement();
+				IQuestionRecommendation question = (IQuestionRecommendation) selection.getFirstElement();
 
 				if (question != null) {
+					IQuestionSearch questionSearch = (IQuestionSearch) selection.getFirstElement();
+					questionSearch.showView();
 					view.getButtonRecommendation().setEnabled(true);
-					if (DatabaseRecommendation.getInstance().existQuestion(question)) {
+					if (RecommendationProvider.getInstance().existQuestion(question)) {
 						view.getButtonRecommendation().setText("UnLike");
 
 					} else {
@@ -86,22 +104,39 @@ public class SearchController {
 	}
 
 	public static void search(SearchView view) {
+		// Update views
+		view.getButtonSearch().setEnabled(false);
+		view.getButtonSearch().redraw();
+		view.getViewer().setInput(null);
+		view.getViewer().refresh();
+		view.getLabelResults().setText("Searching...");
+		view.getLabelResults().redraw();
+		
 		String query = view.getTextSearch().getText();
 		if (query.isEmpty()) {
 			view.getViewer().setInput(null);
 			view.getViewer().refresh();
+			view.getLabelResults().setText("0 Results.");
+			view.getLabelResults().redraw();
 			return;
 		}
 
 		try {
-			ArrayList<IQuestionRecomendation> questions = SearchEngine.searchQuestion(query);
+			ArrayList<IQuestionRecommendation> questions = SearchEngine.searchQuestions(query);
 
 			// Update ui
 			view.getViewer().setInput(questions);
 			view.getViewer().refresh();
+			view.getLabelResults().setText(questions.size() + " Results.");
+			view.getLabelResults().redraw();
 		} catch (ConnectionSOException e) {
 			System.err.println(e);
 			MessageDialog.openError(view.getSite().getShell(), "Connection Lost", e.getMessage());
+			view.getLabelResults().setText("Connection Lost.");
+			view.getLabelResults().redraw();
+		} finally {
+			view.getButtonSearch().setEnabled(true);
+			view.getButtonSearch().redraw();
 		}
 
 	}

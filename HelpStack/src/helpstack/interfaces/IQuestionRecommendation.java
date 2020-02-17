@@ -1,6 +1,6 @@
 package helpstack.interfaces;
 
-public interface IQuestionRecomendation {
+public interface IQuestionRecommendation {
 	
 	public int getId();
 	public String getCollection();

@@ -4,8 +4,8 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import helpstack.Activator;
-import helpstack.intrase.database.DatabaseIntraSE;
-import helpstack.recommendation.database.DatabaseRecommendation;
+import helpstack.intrase.database.IntraSEProvider;
+import helpstack.recommendation.database.RecommendationProvider;
 
 public class HelpStackPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -29,15 +29,15 @@ public class HelpStackPreferencePage extends FieldEditorPreferencePage implement
 	@Override
 	public boolean performOk() {
 		super.performOk();
-		DatabaseIntraSE.updateInstance();
-		DatabaseRecommendation.updateInstance();
+		IntraSEProvider.updateInstance();
+		RecommendationProvider.updateInstance();
 		return true;
 	}
 	
 	@Override
 	protected void performDefaults() {
-		DatabaseIntraSE.updateInstance();
-		DatabaseRecommendation.updateInstance();
+		IntraSEProvider.updateInstance();
+		RecommendationProvider.updateInstance();
 		super.performDefaults();
 		
 	}

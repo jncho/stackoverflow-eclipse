@@ -17,47 +17,47 @@ import helpstack.Activator;
 import helpstack.intrase.model.QuestionIntraSE;
 import helpstack.preferences.PreferenceConstants;
 
-public class DatabaseIntraSE {
+public class IntraSEProvider {
 
 	public static final String D_HOST = "localhost";
 	public static final int D_PORT = 27017;
-	private final String name_db = "IntraseDB";
-	private final String name_collection = "IntraSE";
+	private final String NAME_DB = "IntraseDB";
+	private final String NAME_COLLECTION = "IntraSE";
 
 	private MongoClient mongoClient;
 	private MongoDatabase database;
 	private MongoCollection<Document> collection;
 	
 	// Singleton
-	private static DatabaseIntraSE db;
+	private static IntraSEProvider instance;
 	
-	public static DatabaseIntraSE getInstance() {
+	public static IntraSEProvider getInstance() {
 		
-		if (db == null) {
-			db = new DatabaseIntraSE();
+		if (instance == null) {
+			instance = new IntraSEProvider();
 		}
 		
-		return db;
+		return instance;
 	}
 	
 	public static void updateInstance() {
-		db = new DatabaseIntraSE();
+		instance = new IntraSEProvider();
 	}
 
-	private DatabaseIntraSE() {
+	private IntraSEProvider() {
 		
 		IPreferenceStore ps = Activator.getDefault().getPreferenceStore();
 		String host = ps.getString(PreferenceConstants.P_SERVER_DISE);
 		int port = ps.getInt(PreferenceConstants.P_PORT_DISE);
 
 		this.mongoClient = new MongoClient(host, port);
-		this.database = this.mongoClient.getDatabase(this.name_db);
-		this.collection = database.getCollection(this.name_collection);
+		this.database = this.mongoClient.getDatabase(this.NAME_DB);
+		this.collection = database.getCollection(this.NAME_COLLECTION);
 	}
 	
 
 
-	public void insertQuestionIntraSE(QuestionIntraSE question) {
+	public void insertQuestion(QuestionIntraSE question) {
 		int question_id = question.getQuestion_id();
 
 		// Check if question exists in database
@@ -70,7 +70,7 @@ public class DatabaseIntraSE {
 		}
 	}
 	
-	public void updateQuestionIntraSE(QuestionIntraSE question) {
+	public void updateQuestion(QuestionIntraSE question) {
 		collection.updateOne(
 				Filters.eq("question_id", question.getQuestion_id()), 
 				new Document("$set",QuestionIntraSE.toDocument(question)));

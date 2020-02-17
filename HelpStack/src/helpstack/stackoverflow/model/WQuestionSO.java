@@ -7,21 +7,21 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import helpstack.interfaces.ICodeSearch;
-import helpstack.interfaces.IQuestionRecomendation;
+import helpstack.interfaces.IQuestionRecommendation;
 import helpstack.interfaces.IQuestionSearch;
 import helpstack.views.ResultSearchSOView;
 
-public class WQuestionSO implements ICodeSearch, IQuestionSearch, IQuestionRecomendation{
+public class WQuestionSO implements ICodeSearch, IQuestionSearch, IQuestionRecommendation{
 	
-	private final String collection = "RecomendationSO";
-	private final String source = "SO";
+	private final String COLLECTION = "RecomendationSO";
+	private final String SOURCE = "SO";
 	private Question question;
 
 	public WQuestionSO(Question question) {
 		this.question = question;
 	}
 	
-	public static List<WQuestionSO> toWQuestionIntraSE(List<Question> questions) {
+	public static List<WQuestionSO> toWQuestionSO(List<Question> questions) {
 		
 		ArrayList<WQuestionSO> wquestions= new ArrayList<WQuestionSO>();
 		for (Question q : questions) {
@@ -49,7 +49,7 @@ public class WQuestionSO implements ICodeSearch, IQuestionSearch, IQuestionRecom
 
 	@Override
 	public String getCollection() {
-		return collection;
+		return COLLECTION;
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class WQuestionSO implements ICodeSearch, IQuestionSearch, IQuestionRecom
 	
 	@Override
 	public String getSource() {
-		return source;
+		return SOURCE;
 	}
 
 	@Override

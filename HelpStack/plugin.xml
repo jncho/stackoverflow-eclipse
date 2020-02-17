@@ -81,7 +81,7 @@
       <command
             categoryId="helpstack.commands.helpStackCategory"
             id="helpstack.commands.searchSelectionCommand"
-            name="Search Selection">
+            name="Search">
       </command>
       <command
             categoryId="helpstack.commands.helpStackCategory"
@@ -95,7 +95,7 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="helpstack.menus.helpStackMenu"
-               label="Help Stack Menu"
+               label="Help Stack"
                mnemonic="M">
             <command
                   commandId="helpstack.commands.newQuestionIseCommand"

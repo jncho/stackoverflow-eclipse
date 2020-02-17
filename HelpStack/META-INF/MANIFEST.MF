@@ -16,4 +16,7 @@ Bundle-ClassPath: libs/gson-1.4.jar,
  .,
  libs/mongo-java-driver-3.10.2.jar,
  libs/ini4j-0.5.4.jar,
- libs/jsoup-1.12.1.jar
+ libs/jsoup-1.12.1.jar,
+ libs/httpclient-4.5.10.jar,
+ libs/httpcore-4.4.12.jar,
+ libs/commons-logging-1.2.jar

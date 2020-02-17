@@ -8,8 +8,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import helpstack.interfaces.IQuestionRecomendation;
-import helpstack.intrase.database.DatabaseIntraSE;
+import helpstack.interfaces.IQuestionRecommendation;
+import helpstack.intrase.database.IntraSEProvider;
 import helpstack.intrase.model.QuestionIntraSE;
 import helpstack.views.ResultSearchISEView;
 import helpstack.views.SearchView;
@@ -74,7 +74,7 @@ public class ResultSearchISEController {
 				question.setAnswer(answer_text);
 				
 				// Update question in database	
-				DatabaseIntraSE.getInstance().updateQuestionIntraSE(question);
+				IntraSEProvider.getInstance().updateQuestion(question);
 				
 				// Back to view composite
 				view.getStackLayout().topControl = view.getViewQuestion();
@@ -90,14 +90,14 @@ public class ResultSearchISEController {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DatabaseIntraSE.getInstance().deleteQuestion(view.getQuestion());
+				IntraSEProvider.getInstance().deleteQuestion(view.getQuestion());
 				
 				// Refresh table viewer
 				try {
 					SearchView sv = (SearchView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("helpstack");
-					ArrayList<IQuestionRecomendation> input = (ArrayList<IQuestionRecomendation>)sv.getViewer().getInput();
+					ArrayList<IQuestionRecommendation> input = (ArrayList<IQuestionRecommendation>)sv.getViewer().getInput();
 					
-					for (IQuestionRecomendation q : input) {
+					for (IQuestionRecommendation q : input) {
 						if (q.getId() == view.getQuestion().getQuestion_id()) {
 							input.remove(q);
 							MessageDialog.openInformation(view.getSite().getShell(), "Question deleted successfully", "The question has been deleted successfully");

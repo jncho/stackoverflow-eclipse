@@ -14,7 +14,7 @@ import helpstack.views.ResultSearchISEView;
 import helpstack.views.SearchView;
 
 
-public class SearchSelection extends AbstractHandler{
+public class SearchHandler extends AbstractHandler{
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

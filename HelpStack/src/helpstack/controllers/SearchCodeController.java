@@ -1,10 +1,7 @@
 package helpstack.controllers;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -36,7 +33,7 @@ public class SearchCodeController {
 				}
 				
 				try {
-					ArrayList<String> codes = SearchEngine.searchQuestionCode(query);
+					ArrayList<String> codes = SearchEngine.searchQuestionsCode(query);
 	
 					// Update ui
 					table.setInput(codes);

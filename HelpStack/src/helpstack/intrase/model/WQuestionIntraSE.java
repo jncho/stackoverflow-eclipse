@@ -7,14 +7,14 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import helpstack.interfaces.ICodeSearch;
-import helpstack.interfaces.IQuestionRecomendation;
+import helpstack.interfaces.IQuestionRecommendation;
 import helpstack.interfaces.IQuestionSearch;
 import helpstack.views.ResultSearchISEView;
 
-public class WQuestionIntraSE implements IQuestionSearch, IQuestionRecomendation, ICodeSearch{
+public class WQuestionIntraSE implements IQuestionSearch, IQuestionRecommendation, ICodeSearch{
 	
-	private final String collection = "RecomendationIntraSE";
-	private final String source = "ISE";
+	private final String COLLECTION = "RecomendationIntraSE";
+	private final String SOURCE = "ISE";
 	private QuestionIntraSE question;
 	
 
@@ -39,7 +39,7 @@ public class WQuestionIntraSE implements IQuestionSearch, IQuestionRecomendation
 	
 	@Override
 	public String getCollection() {
-		return collection;
+		return COLLECTION;
 	}
 	
 	@Override
@@ -54,7 +54,7 @@ public class WQuestionIntraSE implements IQuestionSearch, IQuestionRecomendation
 	
 	@Override
 	public String getSource() {
-		return source;
+		return SOURCE;
 	}
 	
 	public static List<WQuestionIntraSE> toWQuestionIntraSE(List<QuestionIntraSE> questions) {

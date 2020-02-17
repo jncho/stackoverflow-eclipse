@@ -1,10 +1,7 @@
 package helpstack.views;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -15,10 +12,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import helpstack.intrase.database.DatabaseIntraSE;
-import helpstack.intrase.model.QuestionIntraSE;
+import helpstack.controllers.NewQuestionISEController;
 
 public class NewQuestionISEView extends ViewPart{
+	
+	private Button btnPost;
+	private Text textTitle;
+	private Text textOwner;
+	private Text textQuestion;
+	private Text textAnswer;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -28,13 +30,13 @@ public class NewQuestionISEView extends ViewPart{
 		Label lblTitulo = new Label(parent, SWT.NONE);
 		lblTitulo.setText("Title* :");
 		
-		Text textTitle = new Text(parent, SWT.BORDER);
+		textTitle = new Text(parent, SWT.BORDER);
 		textTitle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblCreador = new Label(parent, SWT.NONE);
 		lblCreador.setText("Creator* :");
 		
-		Text textOwner = new Text(parent, SWT.BORDER);
+		textOwner = new Text(parent, SWT.BORDER);
 		textOwner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		SashForm sashForm = new SashForm(parent, SWT.NONE);
@@ -44,57 +46,65 @@ public class NewQuestionISEView extends ViewPart{
 		grpQuestion.setText("Question*");
 		grpQuestion.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		Text textQuestion = new Text(grpQuestion, SWT.MULTI);
+		textQuestion = new Text(grpQuestion, SWT.MULTI);
 		
 		Group grpAnswer = new Group(sashForm, SWT.NONE);
 		grpAnswer.setText("Answer*");
 		grpAnswer.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		Text textAnswer = new Text(grpAnswer, SWT.MULTI);
+		textAnswer = new Text(grpAnswer, SWT.MULTI);
 		sashForm.setWeights(new int[] {1, 1});
 		
-		Button btnPost = new Button(parent, SWT.NONE);
+		btnPost = new Button(parent, SWT.NONE);
 		btnPost.setText("Create");
 		
-		btnPost.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Get fields
-				String title = textTitle.getText();
-				String owner = textOwner.getText();
-				String question = textQuestion.getText();
-				String answer = textAnswer.getText();
-				
-				
-				// Validate fields
-				if (title.isEmpty() 
-						|| owner.isEmpty() 
-						|| question.isEmpty()
-						|| answer.isEmpty()) {
-					
-					MessageDialog.openError(getSite().getShell(), "Field Error", "Please, Fill in the required fields.");
-					return;
-				}
-				
-				// Create question
-				int new_id = DatabaseIntraSE.getInstance().getNewId();
-				QuestionIntraSE qise = new QuestionIntraSE(new_id,title,question,answer,owner);
-				// Post question in database
-				DatabaseIntraSE.getInstance().insertQuestionIntraSE(qise);
-				// Alert to user
-				MessageDialog.openInformation(getSite().getShell(), "Question created successfully", "The question has been created successfully");
-				// Clean all fields
-				textTitle.setText("");
-				textOwner.setText("");
-				textQuestion.setText("");
-				textAnswer.setText("");
-			}
-		});
+		// Controller
+		NewQuestionISEController.registerListeners(this);
 	}
 
 	@Override
 	public void setFocus() {
 		
+	}
+
+	public Button getBtnPost() {
+		return btnPost;
+	}
+
+	public Text getTextTitle() {
+		return textTitle;
+	}
+
+	public void setTextTitle(Text textTitle) {
+		this.textTitle = textTitle;
+	}
+
+	public Text getTextOwner() {
+		return textOwner;
+	}
+
+	public void setTextOwner(Text textOwner) {
+		this.textOwner = textOwner;
+	}
+
+	public Text getTextQuestion() {
+		return textQuestion;
+	}
+
+	public void setTextQuestion(Text textQuestion) {
+		this.textQuestion = textQuestion;
+	}
+
+	public Text getTextAnswer() {
+		return textAnswer;
+	}
+
+	public void setTextAnswer(Text textAnswer) {
+		this.textAnswer = textAnswer;
+	}
+
+	public void setBtnPost(Button btnPost) {
+		this.btnPost = btnPost;
 	}
 
 }
